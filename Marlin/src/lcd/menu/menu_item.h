@@ -33,16 +33,6 @@ void lcd_move_z();
 ///////////// Base Menu Items //////////////
 ////////////////////////////////////////////
 
-// BACK_ITEM(LABEL)
-class MenuItem_back : public MenuItemBase {
-  public:
-    FORCE_INLINE static void draw(const bool sel, const uint8_t row, PGM_P const pstr) {
-      _draw(sel, row, pstr, LCD_STR_UPLEVEL[0], LCD_STR_UPLEVEL[0]);
-    }
-    // Back Item action goes back one step in history
-    FORCE_INLINE static void action(PGM_P const=nullptr) { ui.go_back(); }
-};
-
 // SUBMENU(LABEL, screen_handler)
 class MenuItem_submenu : public MenuItemBase {
   public:
@@ -337,6 +327,20 @@ class MenuItem_bool : public MenuEditItemBase {
   }                                          \
   NEXT_ITEM();                               \
 }while(0)
+
+// PSTRING_ITEM is like STATIC_ITEM but it takes
+// two PSTRs with the style as the last parameter.
+
+#define PSTRING_ITEM_P(PLABEL, PVAL, STYL) do{ \
+  constexpr int m = 20;                        \
+  char msg[m+1];                               \
+  msg[0] = ':'; msg[1] = ' ';                  \
+  strncpy_P(msg+2, PSTR(PVAL), m-2);           \
+  if (msg[m-1] & 0x80) msg[m-1] = '\0';        \
+  STATIC_ITEM_P(PLABEL, STYL, msg);            \
+}while(0)
+
+#define PSTRING_ITEM(LABEL, V...)                     PSTRING_ITEM_P(GET_TEXT(LABEL), ##V)
 
 #define STATIC_ITEM(LABEL,      V...)                  STATIC_ITEM_P(GET_TEXT(LABEL), ##V)
 #define STATIC_ITEM_N(LABEL, N, V...)                STATIC_ITEM_N_P(GET_TEXT(LABEL), ##V)
