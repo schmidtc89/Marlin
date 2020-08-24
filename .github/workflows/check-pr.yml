@@ -1,0 +1,27 @@
+#
+# comment-pr.yml
+# Add a comment to any PR directed to a release branch
+#
+
+name: PR Bad Target
+
+on:
+  pull_request:
+    branches:
+    - 1.0.x
+    - 1.1.x
+    - 2.0.x
+
+jobs:
+  bad_target:
+
+    name: PR Bad Target
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Close Pull
+        uses: peter-evans/close-pull@update-dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          delete-branch: false
